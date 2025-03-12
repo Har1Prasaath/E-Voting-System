@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #2ecc71;
+            --background-color: rgba(236, 240, 241, 0.8);
+            --text-color: #34495e;
+            --card-background: rgba(255, 255, 255, 0.9);
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background-image: url(''); /* Placeholder background image */
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input, select {
+            flex-grow: 1;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button[type="submit"] {
+            background-color: var(--secondary-color);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+
+        #clearVotes {
+            background-color: var(--danger-color);
+        }
+
+        #clearVotes:hover {
+            background-color: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: var(--card-background);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(236, 240, 241, 0.5);
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            form {
+                flex-direction: column;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                margin-bottom: 10px;
+            }
+
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        
+        <div class="card">
+            <h2>Manage Candidates</h2>
+            <form id="candidateForm">
+                <input type="text" id="candidateName" placeholder="Candidate Name" required>
+                <select id="action">
+                    <option value="add">Add</option>
+                    <option value="delete">Delete</option>
+                    <option value="update">Update</option>
+                </select>
+                <input type="text" id="newName" placeholder="New name (for update)">
+                <button type="submit">Submit</button>
+            </form>
+            <h3>Current Candidates</h3>
+            <table id="candidateTable">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                        <tr>
+                            <td>{{ candidate }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Manage Voters</h2>
+            <form id="addVoterForm">
+                <input type="text" id="voterId" placeholder="Voter ID" required>
+                <input type="text" id="voterName" placeholder="Voter Name" required>
+                <button type="submit">Add Voter</button>
+            </form>
+            <form id="removeVoterForm">
+                <input type="text" id="removeVoterId" placeholder="Voter ID to Remove" required>
+                <button type="submit">Remove Voter</button>
+            </form>
+            <h3>Current Voters</h3>
+            <table id="voterTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Has Voted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voter in voters %}
+                        <tr>
+                            <td data-label="ID">{{ voter[0] }}</td>
+                            <td data-label="Name">{{ voter[1] }}</td>
+                            <td data-label="Has Voted">{{ "Yes" if voter[2] else "No" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Voting Results</h2>
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate, votes in results %}
+                        <tr>
+                            <td data-label="Candidate">{{ candidate }}</td>
+                            <td data-label="Votes">{{ votes }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Vote Details</h2>
+            <table id="voteDetailsTable">
+                <thead>
+                    <tr>
+                        <th>Voter ID</th>
+                        <th>Encrypted Name</th>
+                        <th>Voted For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voter_id, encrypted_name, candidate in vote_details %}
+                        <tr>
+                            <td data-label="Voter ID">{{ voter_id }}</td>
+                            <td data-label="Encrypted Name">{{ encrypted_name }}</td>
+                            <td data-label="Voted For">{{ candidate }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <form action="/publish_results" method="post">
+                <button type="submit">Publish Results</button>
+            </form>
+            
+            <form action="/clear_votes" method="get">
+                <button id="clearVotes" type="submit">Clear Votes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>

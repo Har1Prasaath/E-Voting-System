@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>E-Voting</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800" rel="stylesheet">
+  
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    #hero {
+      background-image: url('static/img/16.png');
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+    .hero-container {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      font-family: "Raleway", sans-serif;
+      font-weight: 400;
+      margin: 0 0 20px 0;
+      padding: 0;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      font-family: "Raleway", sans-serif;
+      font-weight: 400;
+      margin: 0 0 20px 0;
+      padding: 0;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .btn-get-started, .btn-services {
+      padding: 0.5rem 1rem;
+      border: 2px solid white;
+      border-radius: 5px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .btn-get-started:hover, .btn-services:hover {
+      background-color: white;
+      color: black;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 300px;
+      border-radius: 5px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    .btn-login {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .btn-login:hover {
+      background-color: #45a049;
+    }
+    #loginError {
+      color: red;
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <section id="hero">
+    <div class="hero-container">
+      <h1>CLOUD-9 E-VOTING PORTAL</h1>
+      <h2>Ultimatum for <span id="typed"></span></h2>
+      <div class="actions">
+        <a href="{{ url_for('vote') }}" class="btn-get-started">VOTE</a>
+        <a href="#" class="btn-services" id="adminBtn">ADMIN</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Login Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Admin Login</h2>
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminId">Admin ID:</label>
+          <input type="text" id="adminId" name="adminId" required>
+        </div>
+        <div class="form-group">
+          <label for="adminPassword">Password:</label>
+          <input type="password" id="adminPassword" name="adminPassword" required>
+        </div>
+        <button type="submit" class="btn-login">Login</button>
+      </form>
+      <p id="loginError">Invalid credentials. Please try again.</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var typed = new Typed('#typed', {
+        strings: ['SECURE VOTING', 'STANDARD ADMIN CONTROLS', 'PUBLISHING RESULTS!!'],
+        typeSpeed: 50,
+        backSpeed: 50,
+        loop: true
+      });
+
+      // Predefined set of valid admin credentials
+      const validCredentials = [
+        { id: 'admin1', password: 'pass1' },
+        { id: 'admin2', password: 'pass2' },
+        { id: 'admin3', password: 'pass3' }
+      ];
+
+      // Get the modal
+      var modal = document.getElementById("adminModal");
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("adminBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+
+      // Handle form submission
+      document.getElementById("adminLoginForm").onsubmit = function(e) {
+        e.preventDefault();
+        var adminId = document.getElementById("adminId").value;
+        var adminPassword = document.getElementById("adminPassword").value;
+        
+        // Check if the entered credentials match any in the validCredentials array
+        var isValid = validCredentials.some(cred => cred.id === adminId && cred.password === adminPassword);
+        
+        if (isValid) {
+          // Redirect to admin page
+          window.location.href = "{{ url_for('admin') }}";
+        } else {
+          // Show error message
+          document.getElementById("loginError").style.display = "block";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
